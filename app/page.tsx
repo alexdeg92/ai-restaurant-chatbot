@@ -317,21 +317,21 @@ export default function Home() {
               <span className="w-2 h-2 bg-orange-400 rounded-full animate-pulse" />
               Propulsé par l&apos;intelligence artificielle
             </div>
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight mb-6">
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black leading-tight mb-6">
               Votre restaurant,{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-amber-300">
                 disponible 24/7
               </span>
             </h1>
-            <p className="text-xl text-slate-300 mb-8 leading-relaxed max-w-lg">
+            <p className="text-lg sm:text-xl text-slate-300 mb-8 leading-relaxed max-w-lg break-words">
               Un chatbot IA qui prend les commandes, gère les réservations et répond aux questions
               de vos clients — automatiquement, en français québécois.
             </p>
             <div className="flex flex-wrap gap-4">
-              <button onClick={() => setChatOpen(true)} className="gradient-orange px-8 py-4 rounded-xl text-lg font-bold hover:opacity-90 transition pulse-glow">
+              <button onClick={() => setChatOpen(true)} className="w-full sm:w-auto gradient-orange px-8 py-4 rounded-xl text-lg font-bold hover:opacity-90 transition pulse-glow">
                 Voir la démo en direct →
               </button>
-              <a href="#tarifs" className="border border-slate-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-slate-800 transition">
+              <a href="#tarifs" className="w-full sm:w-auto text-center border border-slate-600 px-8 py-4 rounded-xl text-lg font-semibold hover:bg-slate-800 transition">
                 Voir les tarifs
               </a>
             </div>
@@ -391,7 +391,7 @@ export default function Home() {
       <section id="fonctionnalites" className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
               Tout ce que votre restaurant a besoin,{" "}
               <span className="text-orange-400">automatisé</span>
             </h2>
@@ -400,7 +400,7 @@ export default function Home() {
               vous puissiez vous concentrer sur la cuisine.
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               {
                 icon: <IconChat />,
@@ -449,7 +449,7 @@ export default function Home() {
       <section id="demo" className="py-24 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
               Essayez-le <span className="text-orange-400">maintenant</span>
             </h2>
             <p className="text-lg text-slate-400 max-w-2xl mx-auto">
@@ -469,7 +469,7 @@ export default function Home() {
               </span>
             </button>
           </div>
-          <div className="mt-12 grid md:grid-cols-4 gap-4 max-w-3xl mx-auto">
+          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto">
             {["Voir le menu", "Réserver une table", "Commander pour livraison", "Heures d'ouverture"].map((item) => (
               <button
                 key={item}
@@ -487,11 +487,11 @@ export default function Home() {
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
               Prêt en <span className="text-orange-400">3 étapes</span>
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
             {[
               {
                 step: "01",
@@ -523,11 +523,11 @@ export default function Home() {
       <section className="py-24 bg-slate-900/30">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
               Ce que nos clients <span className="text-orange-400">disent</span>
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {[
               {
                 name: "Marie-Claire Tremblay",
@@ -571,12 +571,12 @@ export default function Home() {
       <section id="tarifs" className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-4">
               Tarifs <span className="text-orange-400">transparents</span>
             </h2>
             <p className="text-lg text-slate-400">Pas de frais cachés. Annulez quand vous voulez.</p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {[
               {
                 name: "Essentiel",
@@ -665,7 +665,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
-              <h2 className="text-4xl md:text-5xl font-black mb-6">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl font-black mb-6">
                 Prêt à <span className="text-orange-400">automatiser</span> votre restaurant?
               </h2>
               <p className="text-lg text-slate-300 mb-8 leading-relaxed">
