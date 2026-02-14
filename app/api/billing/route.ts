@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-01-27.acacia' as Stripe.LatestApiVersion,
-});
+function getStripe() {
+  const key = process.env.STRIPE_SECRET_KEY;
+  if (!key || key === 'sk_test_placeholder') {
+    return null;
+  }
+  return new Stripe(key, {
+    apiVersion: '2025-01-27.acacia' as Stripe.LatestApiVersion,
+  });
+}
 
 const PLANS = {
   starter: {
@@ -33,6 +39,11 @@ export async function POST(req: NextRequest) {
 
     const planInfo = PLANS[plan as keyof typeof PLANS];
     const origin = req.headers.get('origin') || 'http://localhost:3000';
+
+    const stripe = getStripe();
+    if (!stripe) {
+      return NextResponse.json({ error: 'Stripe non configuré. Contactez-nous pour activer la facturation.' }, { status: 503 });
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],

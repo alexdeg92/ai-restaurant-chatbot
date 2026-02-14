@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import { supabaseAdmin } from '@/lib/supabase';
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+function getOpenAI() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY || '' });
+}
 
 async function getRestaurantContext(slug: string) {
   const { data: restaurant } = await supabaseAdmin
@@ -122,7 +124,7 @@ export async function POST(req: NextRequest) {
     ];
 
     // Call OpenAI
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: 'gpt-4o-mini',
       messages,
       max_tokens: 800,
