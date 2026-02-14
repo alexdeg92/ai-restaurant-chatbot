@@ -70,64 +70,8 @@ const IconMinus = () => (
   </svg>
 );
 
-/* ───────────────── CHAT DEMO DATA ───────────────── */
+/* ───────────────── CHAT TYPES ───────────────── */
 type Message = { role: "user" | "bot"; text: string };
-
-const CONVERSATIONS: Record<string, Message[]> = {
-  "Voir le menu": [
-    { role: "user", text: "Je veux voir le menu svp" },
-    {
-      role: "bot",
-      text: "Bien sûr! 🍽️ Voici nos catégories:\n\n🥗 **Entrées** — à partir de 8$\n🍕 **Plats principaux** — à partir de 16$\n🍰 **Desserts** — à partir de 7$\n🍷 **Boissons** — à partir de 4$\n\nQuelle section vous intéresse?",
-    },
-    { role: "user", text: "Les plats principaux" },
-    {
-      role: "bot",
-      text: "Excellent choix! Voici nos plats principaux:\n\n🥩 **Bavette de boeuf grillée** — 28$\n🍗 **Poulet rôti aux herbes** — 22$\n🐟 **Saumon de l'Atlantique** — 26$\n🍝 **Pâtes au pesto maison** — 18$\n🥘 **Tourtière du Lac** — 20$\n\nVoulez-vous commander?",
-    },
-  ],
-  "Réserver une table": [
-    { role: "user", text: "Je voudrais réserver une table" },
-    {
-      role: "bot",
-      text: "Avec plaisir! 📅 Pour quelle date souhaitez-vous réserver?",
-    },
-    { role: "user", text: "Ce samedi soir, pour 4 personnes" },
-    {
-      role: "bot",
-      text: "Parfait! Samedi soir pour 4 personnes. 🕖 Voici nos disponibilités:\n\n✅ 17h30\n✅ 18h00\n✅ 19h30\n❌ 20h00 (complet)\n✅ 20h30\n\nQuelle heure vous convient?",
-    },
-    { role: "user", text: "19h30" },
-    {
-      role: "bot",
-      text: "✅ **Réservation confirmée!**\n\n📅 Samedi, 19h30\n👥 4 personnes\n📍 Table près de la fenêtre\n\nVous recevrez un SMS de confirmation. À samedi! 🎉",
-    },
-  ],
-  "Commander pour livraison": [
-    { role: "user", text: "Je veux commander pour livraison" },
-    {
-      role: "bot",
-      text: "Super! 🚗 Livraison disponible dans un rayon de 10 km.\n\nQue souhaitez-vous commander?",
-    },
-    { role: "user", text: "2 poutines classiques et une pizza pepperoni" },
-    {
-      role: "bot",
-      text: "Excellent! Votre commande:\n\n🍟 2x Poutine classique — 28$\n🍕 1x Pizza pepperoni — 18$\n🚗 Frais de livraison — 5$\n\n💰 **Total: 51$ + taxes**\n\nConfirmer et payer?",
-    },
-    { role: "user", text: "Oui, confirmer!" },
-    {
-      role: "bot",
-      text: "✅ **Commande confirmée!**\n\n⏱️ Temps estimé: **35-45 minutes**\n📱 Suivez votre commande en temps réel\n\nBon appétit! 🎉",
-    },
-  ],
-  "Heures d'ouverture": [
-    { role: "user", text: "C'est quoi vos heures d'ouverture?" },
-    {
-      role: "bot",
-      text: "Voici nos heures d'ouverture! 🕐\n\n🗓️ **Lundi - Jeudi:** 11h à 21h\n🗓️ **Vendredi - Samedi:** 11h à 23h\n🗓️ **Dimanche:** 10h à 21h (brunch dès 10h!)\n\n📍 1234 Rue Principale, Montréal\n📞 (514) 555-0123\n\nAutre chose?",
-    },
-  ],
-};
 
 /* ───────────────── CHAT WIDGET ───────────────── */
 function ChatWidget({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
@@ -139,51 +83,60 @@ function ChatWidget({ isOpen, onClose }: { isOpen: boolean; onClose: () => void 
   ]);
   const [isTyping, setIsTyping] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const [conversationId, setConversationId] = useState<string | null>(null);
+  const [sessionId] = useState(() => typeof crypto !== 'undefined' ? crypto.randomUUID() : Math.random().toString(36));
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const quickReplies = Object.keys(CONVERSATIONS);
+  const quickReplies = ["Voir le menu", "Réserver une table", "Commander pour livraison", "Heures d'ouverture"];
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
-  const simulateConversation = async (topic: string) => {
-    const convo = CONVERSATIONS[topic];
-    if (!convo) return;
+  const sendMessage = async (text: string) => {
+    setMessages((prev) => [...prev, { role: "user", text }]);
+    setIsTyping(true);
 
-    for (const msg of convo) {
-      if (msg.role === "user") {
-        setMessages((prev) => [...prev, msg]);
-        await new Promise((r) => setTimeout(r, 800));
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: text,
+          restaurantSlug: "chez-marcel",
+          sessionId,
+          conversationId,
+        }),
+      });
+      const data = await res.json();
+      setIsTyping(false);
+
+      if (data.reply) {
+        setMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
+        if (data.conversationId) setConversationId(data.conversationId);
       } else {
-        setIsTyping(true);
-        await new Promise((r) => setTimeout(r, 1500));
-        setIsTyping(false);
-        setMessages((prev) => [...prev, msg]);
-        await new Promise((r) => setTimeout(r, 500));
+        setMessages((prev) => [...prev, { role: "bot", text: data.error || "Désolé, une erreur est survenue." }]);
       }
+    } catch {
+      setIsTyping(false);
+      setMessages((prev) => [...prev, { role: "bot", text: "Désolé, je n'arrive pas à me connecter. Réessayez!" }]);
     }
   };
 
   const handleQuickReply = (topic: string) => {
-    simulateConversation(topic);
+    const prompts: Record<string, string> = {
+      "Voir le menu": "Je veux voir le menu svp",
+      "Réserver une table": "Je voudrais réserver une table",
+      "Commander pour livraison": "Je veux commander pour livraison",
+      "Heures d'ouverture": "C'est quoi vos heures d'ouverture?",
+    };
+    sendMessage(prompts[topic] || topic);
   };
 
   const handleSend = () => {
     if (!inputValue.trim()) return;
-    const userMsg: Message = { role: "user", text: inputValue };
-    setMessages((prev) => [...prev, userMsg]);
+    const text = inputValue;
     setInputValue("");
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "bot",
-          text: "Merci pour votre message! 😊 Dans la version complète, je pourrais répondre à toutes vos questions. Essayez les boutons rapides pour voir une démo!",
-        },
-      ]);
-    }, 1500);
+    sendMessage(text);
   };
 
   if (!isOpen) return null;
